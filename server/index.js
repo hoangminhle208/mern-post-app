@@ -3,17 +3,21 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import posts from './router/post.js';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.port || 5000;
-const URI = 'mongodb+srv://admin:C4o9JGNrchVaJ70H@cluster0.gjq4fso.mongodb.net/?retryWrites=true&w=majority'
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true,limit:'30mb'}));
+const PORT = process.env.PORT || 5000;
+const URI = process.env.DATABASE_URL;
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(cors());
 
 app.use('/posts',posts);
 
-mongoose.connect(URI,{useNewUrlParser:true,useUnifiedTopology:true})
+mongoose
+    .connect(URI,{useNewUrlParser:true,useUnifiedTopology:true})
     .then(()=>{
         console.log('Connected to DB');
         app.listen(PORT,()=>{
